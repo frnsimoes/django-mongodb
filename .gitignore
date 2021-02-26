@@ -1,0 +1,7 @@
+.venv
+*pyc
+__pycache__
+import_fun.py
+pymongo_fun.py
+.vscode
+.env
