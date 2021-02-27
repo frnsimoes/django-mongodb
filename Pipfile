@@ -12,6 +12,8 @@ pymongo = "*"
 djongo = "*"
 pandas = "*"
 python-decouple = "*"
+drf-yasg = "*"
+django-filter = "*"
 
 [dev-packages]
 
