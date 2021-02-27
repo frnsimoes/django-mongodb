@@ -2,7 +2,6 @@ import pymongo
 import pandas as pd
 from decouple import config
 
-
 class MongoDB(object):
 
     def __init__(self, database=None, collection=None):
@@ -34,6 +33,7 @@ class MongoDB(object):
             'data_inicio': 'str'
         }
 
+
         df = pd.read_csv(
             path,
             header=None,
@@ -41,11 +41,19 @@ class MongoDB(object):
             dtype=dtypes,
             parse_dates=['data_inicio'],
             skiprows=1,
-            infer_datetime_format=True)
+            infer_datetime_format=True,
+            keep_default_na=False
+
+            )
+
+
 
         data = df.to_dict('records')
+        
 
         self.col.insert_many(data, ordered=False)
+
+
 
 
 if __name__ == '__main__':
@@ -53,3 +61,4 @@ if __name__ == '__main__':
                       collection=config('COLLECTION_NAME'))
                       
     mongodb.insert_data('dataset_estudantes.csv')
+

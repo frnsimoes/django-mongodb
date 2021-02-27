@@ -1,79 +1,53 @@
-from core.filters import EventFilter
 from datetime import datetime
+from django.db.models.query import QuerySet
+
 from django.utils.dateparse import parse_date
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, viewsets, status
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-# from .filters import EventFilter
+from rest_framework.decorators import action
+
+from core.filters import NumberofFilter, StudentsFilter
 
 from .models import Students
 from .serializers import CampusSerializer, StudentsSerializer
 
 
+# class CountModelMixin(object):
+#     @action(detail=False)
+#     def count(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         content = {'count': queryset.count()}
+#         return Response(content)
+
 class StudentsListView(mixins.ListModelMixin,
                        viewsets.GenericViewSet):
 
-    """
 
-    1) List all documents, if no parameters
-
-    Parameters
-
-    2) 'Modalidade' param: list documents that matches 'modalidade' ('EAD' or 'PRESENCIAL') param ordered by date.
-    3) 'data_inicio' param: list documents oredered by '-data_inicio'
-
-    """
-
-    filter_backends = [DjangoFilterBackend]
-    filter_class = EventFilter
-    queryset = Students.objects.all()
     serializer_class = StudentsSerializer
-
-    def get(self, request):
-        """
-        Calling 'get' method is not needed, 
-        I called because I like to see what's happening.
-        """
-
-        students = self.queryset
-        serializer = self.serializer_class(students, many=True)
-        return Response(serializer.data)
+    queryset = Students.objects.all().order_by('-data_inicio')
+    filter_backends = [DjangoFilterBackend]
+    filter_class = StudentsFilter
+    filterset_fields = ['modalidade', 'data_inicio', 'data_fim']
 
 
-# class CampusListView(mixins.ListModelMixin,
-#                      viewsets.GenericViewSet):
-
-    """
-    Accepts GET requests:
-
-    1) Lists all documents 
-
-    Parameters
-
-    2) 'Campus' param: list campus with respect course. 
-
-    """
-
-#     serializer_class = CampusSerializer
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ['campus']
-
-#     def get_queryset(self):
-#         queryset = Students.objects.all()
-
-#         campus = self.request.query_params.get('campus')
-#         if campus:
-#             queryset = queryset.filter(campus__icontains=campus)
-
-#         return queryset
+class CampusListView(mixins.ListModelMixin,
+                     viewsets.GenericViewSet):
 
 
-# class NumberOfStudentsListView(mixins.ListModelMixin,
-#                                viewsets.GenericViewSet):
+    serializer_class = CampusSerializer
+    queryset = Students.objects.values('campus', 'curso')
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['campus']
 
-#     serializer_class = StudentsSerializer
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ['campus', 'data_inicio']
-#     filter_class = EventFilter
-#     queryset = Students.objects.all()
+
+class NumberOfStudentsListView(mixins.ListModelMixin,
+                               viewsets.GenericViewSet,
+                               ):
+
+    serializer_class = StudentsSerializer
+    queryset = Students.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_class = NumberofFilter
+    filterset_fields = ['campus', 'data_inicio', 'data_fim']

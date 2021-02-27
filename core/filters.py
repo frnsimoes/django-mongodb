@@ -1,36 +1,36 @@
-from django_filters.filters import CharFilter, ChoiceFilter
 from .models import Students
 from django_filters import FilterSet, IsoDateTimeFilter
+import django_filters
+from django_filters.widgets import RangeWidget
 from .models import CHOICES_CAMPUS
 
-class EventFilter(FilterSet):
+
+class StudentsFilter(FilterSet):
+
+    data_inicio = django_filters.DateFilter(field_name='data_inicio',
+                                            lookup_expr='gte',
+                                            )
+    data_fim = django_filters.DateFilter(field_name='data_fim',
+                                         lookup_expr='lte',
+                                         )
+
     class Meta:
         model = Students
-        fields = {
-            'data_inicio': ('lte', ),
-            'data_fim': ('gte', ),
-            'campus': ('icontains', ),
-            
-        }
+        fields = ['data_inicio', 'data_fim', 'modalidade']
 
-    filter_overrides = {
-        Students.data_inicio: {
-            'filter_class': IsoDateTimeFilter
-        },
-        Students.data_fim: {
-            'filter_class': IsoDateTimeFilter
-        },
-        Students.campus: {
-            'filter_class': ChoiceFilter(choices=CHOICES_CAMPUS)
-        },
-    }
 
-# class CampusFilter(FilterSet):
-#     class Meta: 
-#         model = Students
-#         fields = ['campus']
-#         filter_overrides = {
-#             Students.campus: {
-                
-#             }
-#         }
+class NumberofFilter(FilterSet):
+    
+    data_inicio = django_filters.DateFilter(field_name='data_inicio',
+                                            lookup_expr='gte')
+                                            
+                                            
+    data_fim = django_filters.DateFilter(field_name='data_fim',
+                                         lookup_expr='lte')
+                                         
+    
+    campus = django_filters.ChoiceFilter(field_name='campus', label='Nome do campus', choices=CHOICES_CAMPUS)
+
+    class Meta:
+        models = Students
+        fields = ['campus', 'data_inicio', 'data_fim']
