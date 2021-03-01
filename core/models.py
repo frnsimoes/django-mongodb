@@ -27,10 +27,10 @@ class Students(models.Model):
 
     idade_ate_31_12_2016 = models.CharField(max_length=20,
                                             blank=True)
-                                            
-    ra = models.CharField(max_length=15,
-                          blank=True)
-                          
+
+    ra = models.CharField(blank=True, null=True,
+                          max_length=15)
+
     campus = models.CharField(choices=CHOICES_CAMPUS,
                               max_length=2,
                               blank=True)
@@ -46,10 +46,8 @@ class Students(models.Model):
 
     nivel_do_curso = models.CharField(max_length=50,
                                       blank=True)
-                                      
-    data_inicio = models.DateField()
 
-    data_fim = models.DateField(auto_now_add=True)
+    data_inicio = models.DateField()
 
     def __str__(self):
         return self.nome

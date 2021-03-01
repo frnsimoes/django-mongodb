@@ -1,36 +1,41 @@
 from .models import Students
-from django_filters import FilterSet, IsoDateTimeFilter
+from django_filters import FilterSet
 import django_filters
-from django_filters.widgets import RangeWidget
 from .models import CHOICES_CAMPUS
 
 
 class StudentsFilter(FilterSet):
 
-    data_inicio = django_filters.DateFilter(field_name='data_inicio',
-                                            lookup_expr='gte',
-                                            )
-    data_fim = django_filters.DateFilter(field_name='data_fim',
-                                         lookup_expr='lte',
-                                         )
+    data_inicio = django_filters.DateFromToRangeFilter(
+        label = 'Data de início e data de fim. Formato dos campos: yy-mm-dd'
+    )
 
     class Meta:
         model = Students
-        fields = ['data_inicio', 'data_fim', 'modalidade']
+        fields = ['modalidade']
 
 
 class NumberofFilter(FilterSet):
-    
-    data_inicio = django_filters.DateFilter(field_name='data_inicio',
-                                            lookup_expr='gte')
-                                            
-                                            
-    data_fim = django_filters.DateFilter(field_name='data_fim',
-                                         lookup_expr='lte')
-                                         
-    
-    campus = django_filters.ChoiceFilter(field_name='campus', label='Nome do campus', choices=CHOICES_CAMPUS)
+
+    data_inicio = django_filters.DateFromToRangeFilter(
+        label = 'Data de início e data de fim. Formato dos campos: yy-mm-dd'
+    )
+
+    campus = django_filters.ChoiceFilter(
+        field_name='campus', label='Nome do campus', choices=CHOICES_CAMPUS)
 
     class Meta:
         models = Students
-        fields = ['campus', 'data_inicio', 'data_fim']
+        fields = ['campus']
+
+
+class RaCampusFilter(FilterSet):
+
+    ra = django_filters.CharFilter(field_name='ra', lookup_expr='icontains')
+    campus = django_filters.CharFilter(
+        field_name='campus', lookup_expr='icontains')
+
+    class Meta:
+
+        models = Students
+        fields = ['ra']

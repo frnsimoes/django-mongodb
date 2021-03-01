@@ -21,6 +21,8 @@ class MongoDB(object):
             'curso', 'modalidade', 'nivel_do_curso', 'data_inicio'
         ]
 
+
+
         dtypes = {
             'nome': 'str',
             'idade_ate_31_12_2016': 'str',
@@ -33,7 +35,7 @@ class MongoDB(object):
             'data_inicio': 'str'
         }
 
-
+        
         df = pd.read_csv(
             path,
             header=None,
@@ -42,14 +44,16 @@ class MongoDB(object):
             parse_dates=['data_inicio'],
             skiprows=1,
             infer_datetime_format=True,
-            keep_default_na=False
+            keep_default_na=False,
+            skip_blank_lines=False
 
             )
 
-
+        # Remove '.0' from 'ra' column, so I can use it as an url value
+        
+        df['ra'] = df['ra'].str.replace('\..*', '', regex=True)
 
         data = df.to_dict('records')
-        
 
         self.col.insert_many(data, ordered=False)
 
@@ -57,6 +61,7 @@ class MongoDB(object):
 
 
 if __name__ == '__main__':
+    
     mongodb = MongoDB(database=config('DB_NAME'),
                       collection=config('COLLECTION_NAME'))
                       
