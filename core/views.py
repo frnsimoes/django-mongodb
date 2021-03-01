@@ -1,15 +1,14 @@
 from django.http.response import JsonResponse
 from django.utils.dateparse import parse_date
-from django_filters import filterset
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets, generics
-from rest_framework import views
-from rest_framework import response
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import DestroyAPIView, get_object_or_404
-import json
-from django.http import HttpResponse
+from rest_framework.generics import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
+from django.db import connection
 
 from core.filters import NumberofFilter, RaCampusFilter, StudentsFilter
 
@@ -21,7 +20,7 @@ class StudentsListView(generics.ListAPIView):
 
     """
 
-    (Desafio item 1)
+    (endpoint 1)
     View to list all students in the collection
 
     * Filter by 'data_inicio'; format: yy-mm-dd 
@@ -43,7 +42,7 @@ class StudentsListView(generics.ListAPIView):
 class CampusListView(generics.ListAPIView):
 
     """
-    (Desafio item 2)
+    (endpoint 2)
 
     View to list a Campus and its corresponding
     courses. It's filtred by the document, so
@@ -61,7 +60,7 @@ class CampusListView(generics.ListAPIView):
 class NumberOfStudentsListView(generics.ListAPIView):
 
     """
-    (Desafio item 3)
+    (endpoint 3)
 
     View to list all students in the collection
 
@@ -89,9 +88,10 @@ class NumberOfStudentsListView(generics.ListAPIView):
         campus = self.request.query_params.get('campus')
 
         if start_date and end_date and campus:
+
             resp = resp.filter(data_inicio__gte=start_date,
-                                       data_inicio__lte=end_date
-                                       ).filter(campus=campus).count()
+                               data_inicio__lte=end_date
+                               ).filter(campus=campus).count()
 
         else:
 
@@ -119,7 +119,7 @@ class NumberOfStudentsListView(generics.ListAPIView):
 
 class CreateStudent(generics.ListCreateAPIView):
     """
-    (Desafio item 4)
+    (endpoint 4)
 
     View to create a student document. 
     """
@@ -129,21 +129,16 @@ class CreateStudent(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
 
 
+
 class SearchStudent(generics.ListAPIView):
 
     """
-    (Desafio item 5)
+    (endpoint 5)
 
     View to search a student document.
 
     * Filter by 'ra', this view doesn't
     allow search by substring.
-
-    Nota: Tentei fazer esta view passando
-    o 'ra' como 'url value', porém 'ra' não
-    é um campo com uma unique key. No dataset
-    há repetição de aluno por haver mais de
-    um curso cadastro em seu nome.
     """
 
     serializer_class = StudentsSerializer
@@ -151,10 +146,16 @@ class SearchStudent(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['ra']
 
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        print(connection.queries)
+        return super().get(*args, **kwargs)
+
 
 class StudentsDetail(APIView):
 
     """
+    (Desafio item 5)
     View to get a certain document. 
 
     URL values needed:
@@ -176,11 +177,14 @@ class StudentsDetail(APIView):
 
         return resp
 
+    @method_decorator(cache_page(60*60*2))
     def get(self, request, ra, campus):
         student = self.get_object(ra, campus)
 
         try:
             serializer = StudentsSerializer(student)
+            print(connection.queries) # testando cache
+
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except AttributeError:

@@ -14,6 +14,7 @@ pandas = "*"
 python-decouple = "*"
 drf-yasg = "*"
 django-filter = "*"
+python-memcached = "*"
 
 [dev-packages]
 
