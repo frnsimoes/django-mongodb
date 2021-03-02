@@ -62,13 +62,20 @@ class NumberOfStudentsListView(generics.ListAPIView):
     """
     (endpoint 3)
 
+    Important: Don't test through swagger ("/")
+
+    Access the url to test:
+
+    Example:
+    * /students/count/?data_inicio=2016-02-02&data_fim=2021-05-12&campus=AQ
+
     View to list all students in the collection
 
-    * Filter by 'data_inicio'; format: yy-mm-dd 
-    query parameter
-    * Filter by 'data_fim'; format: yy-mm-dd 
-    query parameter
-    * Filter by 'campus' query parameter
+
+    Filters:
+    * data_inicio; format: yy-mm-dd 
+    * data_fim'; format: yy-mm-dd 
+    * campus
 
     Returns the count, or sum, of documents relative to the
     parameters.
@@ -83,22 +90,22 @@ class NumberOfStudentsListView(generics.ListAPIView):
     def get(self, request):
         resp = Students.objects.all()
 
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
+        data_inicio = self.request.query_params.get('data_inicio')
+        data_fim = self.request.query_params.get('data_fim')
         campus = self.request.query_params.get('campus')
 
-        if start_date and end_date and campus:
+        if data_inicio and data_fim and campus:
 
-            resp = resp.filter(data_inicio__gte=start_date,
-                               data_inicio__lte=end_date
+            resp = resp.filter(data_inicio__gte=data_inicio,
+                               data_inicio__lte=data_fim
                                ).filter(campus=campus).count()
 
         else:
 
             resp = {
                 'error': {
-                    'start_date parameter': 'yy-mm-dd',
-                    'end_date parameter': 'yy-mm-dd',
+                    'data_inicio parameter': 'yy-mm-dd',
+                    'data_fim parameter': 'yy-mm-dd',
                     'campus': [
                         'AQ',
                         'CB',
@@ -117,7 +124,7 @@ class NumberOfStudentsListView(generics.ListAPIView):
         return Response({'Number of students': resp})
 
 
-class CreateStudent(generics.ListCreateAPIView):
+class CreateStudent(generics.CreateAPIView):
     """
     (endpoint 4)
 
@@ -127,7 +134,6 @@ class CreateStudent(generics.ListCreateAPIView):
     serializer_class = StudentsSerializer
     queryset = Students.objects.all()
     filter_backends = [DjangoFilterBackend]
-
 
 
 class SearchStudent(generics.ListAPIView):
@@ -155,7 +161,7 @@ class SearchStudent(generics.ListAPIView):
 class StudentsDetail(APIView):
 
     """
-    (Desafio item 5)
+    (endpoint 6)
     View to get a certain document. 
 
     URL values needed:

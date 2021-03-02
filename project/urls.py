@@ -1,4 +1,4 @@
-"""robolaura URL Configuration
+"""project URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -24,11 +24,11 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Robô Laura Desafio API",
+      title="Estudantes Desafio API",
       default_version='v1',
       description="An API",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="simoes.grcia@gmail.com"),
+      contact=openapi.Contact(email="email@email.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,

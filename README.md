@@ -1,6 +1,6 @@
 # Students API (submission)
 
-Desafio técnico de 'Empresa' desenvolvido utilizando Python, Django, Django Rest Framework, Django Filters, Python Memcached. 
+Desafio técnico de 'Empresa' desenvolvido utilizando Python, Django, Djongo (Mongo related package) Django Rest Framework, Django Filters, Python Memcached. 
 
 A aplicação disponibiliza seis endpoints, como exigido no teste. 
 
@@ -8,17 +8,27 @@ A aplicação disponibiliza seis endpoints, como exigido no teste.
 
 - Instale os pacotes do requirements.txt:
 
+`$ pip install -r requirements.txt # pip`
 
-Pip:
-`$ pip install -r requirements.txt`
+`$ pipenv install -r requirements.txt # pipenv`
 
-Pipenv:
-`$ pipenv install -r requirements.txt`
+(Atenção, a biblioteca 'Djongo' tem os seguintes requirements:
+* python 3.6 +
+mongodb 3.6 +)
 
 - Crie o .env, copiando o .env_sample:
 ```
-# Por favor, crie e altere os dados do mongoDB conforme o seu caso
+# por favor, crie e altere os dados do mongoDB conforme o seu caso
+
 $ cp .env_sample .env
+```
+
+- Crie uma nova SECRET_KEY:
+
+```
+>>> from django.core.management.utils import get_random_secret_key
+>>> print(get_random_secret_key())
+# copiar e colar SECRET_KEY gerada no .env
 ```
 
 - Importe do .csv para para o MongoDB
@@ -31,10 +41,10 @@ $ cp .env_sample .env
 
 - Instale o memcached
 
-macOS
-`$ brew install memcached`
-Ubuntu 18.04
-`$ sudo apt install memcached`
+
+`$ brew install memcached # no macOS`
+
+`$ sudo apt install memcached # no Ubuntu 18.04`
 
 ## Como testar as APIs
 
@@ -52,8 +62,9 @@ Com exceção do endpoint 3, há um botão, do lado direito superior, chamado 'f
 
 ## Como testar o cache
 
-macOS
-`$ memcached -vv` para visualizar os stores. 
+As requests só serão armazenadas no cache do memcached caso o memcached esteja ativado. 
+
+`$ memcached -vv # macOS # para visualizar os stores e habilitar o armazenamento em cache. ` 
 
 ## Documentação
 
