@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Students
-from django.utils.dateparse import parse_date
 
 class StudentsSerializer(serializers.ModelSerializer):
 

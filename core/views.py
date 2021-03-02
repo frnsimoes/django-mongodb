@@ -38,7 +38,6 @@ class StudentsListView(generics.ListAPIView):
 
     @method_decorator(cache_page(60*60*2))
     def get(self, *args, **kwargs):
-        print(connection.queries)
         return super().get(*args, **kwargs)
 
 
@@ -152,7 +151,6 @@ class SearchStudent(generics.ListAPIView):
 
     @method_decorator(cache_page(60*60*2))
     def get(self, *args, **kwargs):
-        print(connection.queries)
         return super().get(*args, **kwargs)
 
 
@@ -187,7 +185,6 @@ class StudentsDetail(APIView):
 
         try:
             serializer = StudentsSerializer(student)
-            print(connection.queries)  # testando cache
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
