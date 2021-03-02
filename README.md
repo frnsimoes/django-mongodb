@@ -9,33 +9,32 @@ A aplicação disponibiliza seis endpoints, como exigido no teste.
 - Instale os pacotes do requirements.txt:
 
 
-
 Pip:
-`pip install -r requirements.txt`
+`$ pip install -r requirements.txt`
 
 Pipenv:
-`pipenv install -r requirements.txt`
+`$ pipenv install -r requirements.txt`
 
 - Crie o .env, copiando o .env_sample:
 ```
 # Por favor, crie e altere os dados do mongoDB conforme o seu caso
-`cp .env_sample .env`
+$ cp .env_sample .env
 ```
 
 - Importe do .csv para para o MongoDB
 
-`python import_data.py`
+`$ python import_data.py`
 
 - Crie as migrações do Django e migre as informações do database
 
-`python manage.py makemigrations & python manage.py migrate`
+`$ python manage.py makemigrations & python manage.py migrate`
 
 - Instale o memcached
 
 macOS
-`brew install memcached`
+`$ brew install memcached`
 Ubuntu 18.04
-`sudo apt install memcached`
+`$ sudo apt install memcached`
 
 ## Como testar as APIs
 
@@ -54,10 +53,10 @@ Com exceção do endpoint 3, há um botão, do lado direito superior, chamado 'f
 ## Como testar o cache
 
 macOS
-`memcached -vv` para visualizar os stores. 
+`$ memcached -vv` para visualizar os stores. 
 
 ## Documentação
 
-A documentação é acessível tanto pelo path '/' quanto pelo pat '/docs/'
+A documentação está disponibilizada no path '/docs/'
 
 
