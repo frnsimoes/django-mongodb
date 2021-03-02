@@ -1,16 +1,14 @@
+from django.db import connection
 from django.http.response import JsonResponse
-from django.utils.dateparse import parse_date
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, generics
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.generics import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, status
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from django.db import connection
-
-from core.filters import NumberofFilter, RaCampusFilter, StudentsFilter
+from core.filters import StudentsFilter
 
 from .models import Students
 from .serializers import CampusSerializer, StudentsSerializer
@@ -23,11 +21,11 @@ class StudentsListView(generics.ListAPIView):
     (endpoint 1)
     View to list all students in the collection
 
-    * Filter by 'data_inicio'; format: yy-mm-dd 
-    query parameter
-    * Filter by 'data_fim'; format: yy-mm-dd 
-    query parameter
-    * Filter by 'modalidade' query parameter
+    Filters:
+
+    * data_inicio; format: yy-mm-dd 
+    * data_fim; format: yy-mm-dd 
+    * modalidade' 
 
 
     """
@@ -37,6 +35,11 @@ class StudentsListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filter_class = StudentsFilter
     filterset_fields = ['modalidade', 'data_inicio']
+
+    @method_decorator(cache_page(60*60*2))
+    def get(self, *args, **kwargs):
+        print(connection.queries)
+        return super().get(*args, **kwargs)
 
 
 class CampusListView(generics.ListAPIView):
@@ -76,16 +79,11 @@ class NumberOfStudentsListView(generics.ListAPIView):
     * data_inicio; format: yy-mm-dd 
     * data_fim'; format: yy-mm-dd 
     * campus
-
-    Returns the count, or sum, of documents relative to the
-    parameters.
+    
     """
 
     serializer_class = StudentsSerializer
     queryset = Students.objects.all()
-    # filter_backends = [DjangoFilterBackend]
-    # filter_class = NumberofFilter
-    # filterset_fields = ['campus', 'data_inicio']
 
     def get(self, request):
         resp = Students.objects.all()
@@ -189,7 +187,7 @@ class StudentsDetail(APIView):
 
         try:
             serializer = StudentsSerializer(student)
-            print(connection.queries) # testando cache
+            print(connection.queries)  # testando cache
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
