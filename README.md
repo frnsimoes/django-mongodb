@@ -74,3 +74,6 @@ As requests só serão armazenadas no cache do memcached caso o memcached esteja
 
 A documentação está disponibilizada no path '/docs/'
 
+## Misc.
+
+Flask version: https://github.com/frnsimoes/students-api-flask
